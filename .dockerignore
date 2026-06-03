@@ -1,0 +1,23 @@
+# Controle de versão
+.git
+.gitignore
+.gitattributes
+
+# Artefatos de build locais — o Stage 1 gera o próprio target/
+target/
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+*.iws
+
+# Segredos locais — nunca entram na imagem
+.env
+.env.*
+
+# Claude Code
+.claude/
+
+# Documentação (não necessária na imagem)
+*.md

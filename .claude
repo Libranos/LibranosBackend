@@ -1,0 +1,127 @@
+# Especificação de Contexto do Sistema: Libranos
+
+Este documento serve como fonte de verdade e contexto para o desenvolvimento do sistema **Libranos**, uma plataforma de aprendizado de Língua Brasileira de Sinais (Libras) gamificada (estilo Duolingo). O objetivo deste arquivo é fornecer uma estrutura clara, objetiva e padronizada para que inteligências artificiais e desenvolvedores compreendam o escopo, arquitetura e regras de negócio do software.
+
+---
+
+## 1. Visão Geral do Sistema
+O **Libranos** é uma plataforma web voltada para o ensino de Libras. O sistema adota um modelo hierárquico de ensino baseado em **Módulos**, **Aulas** e **Atividades**. O aprendizado é validado por meio de interações práticas com mídias (vídeos/imagens) e acompanhamento contínuo de progresso.
+
+---
+
+## 2. Perfis de Usuário (Atores)
+
+### 2.1. Administrador (Professor)
+* **Papel:** Gestor de conteúdo pedagógico e administrador da plataforma.
+* **Permissões:**
+    * CRUD completo de Módulos, Aulas e Atividades.
+    * Gerenciamento de usuários (Alunos e outros Administradores).
+    * Visualização do progresso e desempenho dos alunos vinculados ou gerais.
+    * Herda todas as capacidades de visualização do Aluno para fins de teste de conteúdo.
+
+### 2.2. Aluno
+* **Papel:** Usuário final focado no aprendizado.
+* **Permissões:**
+    * Visualizar a listagem de módulos e aulas disponíveis.
+    * Consumir o conteúdo das aulas (título, descrição e vídeo explicativo).
+    * Executar atividades associadas às aulas.
+    * Marcar aulas como concluídas após o cumprimento dos requisitos.
+    * Visualizar seu próprio histórico de navegação, pontuação e progresso geral.
+
+---
+
+## 3. Requisitos Funcionais (RF)
+
+### Gerenciamento de Conteúdo (Admin)
+* **RF-001:** O sistema deve permitir o cadastro de Módulos (agrupadores de aulas).
+* **RF-002:** O sistema deve permitir o cadastro de Aulas vinculadas a um Módulo, contendo título, descrição e link/arquivo de vídeo em Libras.
+* **RF-003:** O sistema deve permitir o cadastro de Atividades vinculadas a uma Aula ou Módulo.
+* **RF-004:** O sistema deve permitir o cadastro de alternativas para uma atividade, definindo obrigatoriamente uma única alternativa correta.
+
+### Experiência do Aluno
+* **RF-005:** O sistema deve exibir o progresso percentual do aluno dentro de cada módulo.
+* **RF-006:** O sistema deve permitir que o aluno assista ao vídeo da aula e a marque como "Concluída".
+* **RF-007:** O sistema deve renderizar o enunciado e as alternativas das atividades suportando mídias (imagens/vídeos) e textos de forma responsiva.
+* **RF-008:** O sistema deve validar a resposta do aluno em tempo real, indicando se a alternativa selecionada está correta ou incorreta.
+* **RF-009:** O sistema deve manter um histórico detalhado das aulas assistidas e atividades respondidas pelo aluno.
+
+---
+
+## 4. Arquitetura e Stack Tecnológica
+
+### Backend
+* **Linguagem/Framework:** Java com **Spring Boot**.
+* **Arquitetura:** Camadas padrão (Controller, Service, Repository, Entity/DTO).
+* **Banco de Dados:** Relacional (mapeamento via Spring Data JPA / Hibernate).
+
+### Frontend
+* **Framework:** **Vue.js**.
+* **Interface:** Web Desktop Responsivo (foco na adaptação fluida para diferentes resoluções de telas de computadores e notebooks, garantindo acessibilidade visual para mídias).
+
+### Qualidade e Metodologia
+* **Metodologia de Desenvolvimento:** **TDD (Test-Driven Development)**.
+    * *Fluxo:* Escrever o teste unitário/integração falho -> Implementar o código mínimo para passar -> Refatorar.
+* **Framework de Testes:** **JUnit 5** no ecossistema Spring Boot Test.
+
+---
+
+## 5. Modelo de Dados Proposto (Entidades Principais)
+
+### `Usuario`
+* `id` (UUID / Long)
+* `nome` (String)
+* `email` (String, Único)
+* `senha` (String, Hash)
+* `perfil` (Enum: `ADMIN`, `ALUNO`)
+
+### `Modulo`
+* `id` (Long)
+* `titulo` (String)
+* `descricao` (String)
+* `ordem` (Integer)
+
+### `Aula`
+* `id` (Long)
+* `modulo_id` (FK)
+* `titulo` (String)
+* `descricao` (Text)
+* `video_url` (String)
+
+### `Atividade`
+* `id` (Long)
+* `aula_id` (FK)
+* `enunciado_texto` (String, Opcional)
+* `enunciado_midia_url` (String, Opcional)
+
+### `Alternativa`
+* `id` (Long)
+* `atividade_id` (FK)
+* `texto` (String, Opcional)
+* `midia_url` (String, Opcional)
+* `correta` (Boolean)
+
+### `ProgressoAluno`
+* `id` (Long)
+* `aluno_id` (FK)
+* `aula_id` (FK)
+* `concluido` (Boolean)
+* `data_conclusao` (Timestamp)
+
+---
+
+## 6. Regras de Negócio Críticas (RN)
+
+* **RN-001 (Consistência de Alternativas):** Uma atividade deve possuir no mínimo 2 e no máximo 5 alternativas cadastradas. Apenas uma delas pode ser marcada como verdadeira (`correta = true`).
+* **RN-002 (Acessibilidade Digital):** Como o sistema é focado em Libras, os campos de mídia (`video_url`, `enunciado_midia_url`, `midia_url`) são prioritários. O sistema deve validar a presença de pelo menos uma forma de mídia visual ou texto descritivo no cadastro de aulas e atividades.
+* **RN-003 (Cálculo de Progresso):** O progresso de um módulo é calculado pela razão: `(Aulas Concluídas pelo Aluno no Módulo / Total de Aulas do Módulo) * 100`.
+* **RN-004 (Políticas de Acesso):** Endpoints de modificação de dados (`POST`, `PUT`, `DELETE` em rotas de módulos/aulas/atividades) devem retornar `403 Forbidden` se disparados por um usuário com perfil `ALUNO`.
+
+---
+
+## 7. Diretrizes para Geração de Código por IA
+
+Quando instruído a codificar partes deste sistema, siga rigorosamente as seguintes diretrizes:
+1.  **Escreva os testes primeiro (TDD):** Sempre forneça a classe de teste em JUnit 5 antes da implementação do Service ou Controller correspondente.
+2.  **Clean Code:** Mantenha métodos de serviços focados em uma única responsabilidade. Use tratamento de exceções global (`@ControllerAdvice`) no Spring Boot.
+3.  **Componentização no Vue.js:** No front-end, separe elementos reutilizáveis como players de vídeo, listas de alternativas e cards de módulos em componentes isolados e reativos.
+4.  **Responsividade Desktop:** O layout deve utilizar estruturas fluidas para garantir que vídeos de enunciados e vídeos de alternativas fiquem visíveis lado a lado ou em grade limpa, sem quebrar a experiência do usuário.
