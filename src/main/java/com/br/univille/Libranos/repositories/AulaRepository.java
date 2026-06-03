@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface AulaRepository extends JpaRepository<Aula, Integer> {
     List<Aula> findByModuloIdOrderByOrdem(Integer moduloId);
+    long countByModuloId(Integer moduloId);
 }
