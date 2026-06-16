@@ -2,6 +2,7 @@ package com.br.univille.Libranos.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,6 +20,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -36,8 +38,28 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+
+                        // Rotas públicas de autenticação
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/api/**").permitAll()
+
+                        // Escrita em módulos: somente TEACHER
+                        .requestMatchers(HttpMethod.POST,   "/api/modulos").hasRole("TEACHER")
+                        .requestMatchers(HttpMethod.PUT,    "/api/modulos/**").hasRole("TEACHER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/modulos/**").hasRole("TEACHER")
+
+                        // Escrita em aulas: somente TEACHER
+                        .requestMatchers(HttpMethod.POST,   "/api/aulas").hasRole("TEACHER")
+                        .requestMatchers(HttpMethod.PUT,    "/api/aulas/**").hasRole("TEACHER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/aulas/**").hasRole("TEACHER")
+
+                        // Escrita em atividades: somente TEACHER
+                        .requestMatchers(HttpMethod.POST,   "/api/atividades").hasRole("TEACHER")
+                        .requestMatchers(HttpMethod.PUT,    "/api/atividades/**").hasRole("TEACHER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/atividades/**").hasRole("TEACHER")
+
+                        // Demais rotas da API: qualquer usuário autenticado
+                        .requestMatchers("/api/**").authenticated()
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -49,21 +71,17 @@ public class SecurityConfiguration {
         return http.build();
     }
 
-
-
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:8081", "http://localhost:8005"));
-        configuration.setAllowedMethods(List.of("GET","POST"));
-        configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
+        configuration.setAllowedOriginPatterns(List.of("*"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        source.registerCorsConfiguration("/**",configuration);
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }

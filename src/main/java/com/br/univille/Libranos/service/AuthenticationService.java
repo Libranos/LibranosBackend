@@ -2,6 +2,7 @@ package com.br.univille.Libranos.service;
 
 import com.br.univille.Libranos.dto.LoginRecord;
 import com.br.univille.Libranos.dto.RegisterRecord;
+import com.br.univille.Libranos.models.Role;
 import com.br.univille.Libranos.models.User;
 import com.br.univille.Libranos.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,9 +30,10 @@ public class AuthenticationService {
 
     public User signup(RegisterRecord input) {
         User user = new User();
-                user.setFullName(input.fullName());
-                user.setEmail(input.email());
-                user.setPassword(passwordEncoder.encode(input.password()));
+        user.setFullName(input.fullName());
+        user.setEmail(input.email());
+        user.setPassword(passwordEncoder.encode(input.password()));
+        user.setRole(input.role() != null ? input.role() : Role.STUDENT);
 
         return userRepository.save(user);
     }
