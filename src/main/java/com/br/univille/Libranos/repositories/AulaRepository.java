@@ -10,4 +10,5 @@ import java.util.List;
 public interface AulaRepository extends JpaRepository<Aula, Integer> {
     List<Aula> findByModuloIdOrderByOrdem(Integer moduloId);
     long countByModuloId(Integer moduloId);
+    List<Aula> findByModuloIdAndAtivoTrueOrderByOrdem(Integer moduloId);
 }

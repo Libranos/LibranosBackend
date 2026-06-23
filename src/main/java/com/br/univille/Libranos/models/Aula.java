@@ -1,8 +1,12 @@
 package com.br.univille.Libranos.models;
 
 import jakarta.persistence.*;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import java.util.List;
+import java.util.ArrayList;
 
 import java.time.LocalDateTime;
 
@@ -20,6 +24,9 @@ public class Aula {
     @Column(columnDefinition = "TEXT")
     private String descricao;
 
+    @Column(columnDefinition = "TEXT")
+    private String videoUrl;
+
     @Column(nullable = false)
     private Integer ordem;
 
@@ -30,11 +37,15 @@ public class Aula {
     @JoinColumn(name = "modulo_id", nullable = false)
     private Modulo modulo;
 
+    @OneToMany(mappedBy = "aula", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Atividade> atividades = new ArrayList<>();
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -44,6 +55,9 @@ public class Aula {
 
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
+
+    public String getVideoUrl() { return videoUrl; }
+    public void setVideoUrl(String videoUrl) { this.videoUrl = videoUrl; }
 
     public Integer getOrdem() { return ordem; }
     public void setOrdem(Integer ordem) { this.ordem = ordem; }

@@ -46,7 +46,8 @@ public class ModuloService {
     }
 
     public void deletar(Integer id) {
-        moduloRepository.delete(findOrThrow(id));
+        Modulo modulo = findOrThrow(id);
+        moduloRepository.delete(modulo);
     }
 
     Modulo findOrThrow(Integer id) {

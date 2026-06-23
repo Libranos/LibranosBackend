@@ -29,6 +29,7 @@ public class AulaService {
         Aula aula = new Aula();
         aula.setTitulo(dto.titulo());
         aula.setDescricao(dto.descricao());
+        aula.setVideoUrl(dto.videoUrl());
         aula.setOrdem(dto.ordem());
         aula.setAtivo(true);
         aula.setModulo(modulo);
@@ -52,13 +53,15 @@ public class AulaService {
         Modulo modulo = findModuloOrThrow(dto.moduloId());
         aula.setTitulo(dto.titulo());
         aula.setDescricao(dto.descricao());
+        aula.setVideoUrl(dto.videoUrl());
         aula.setOrdem(dto.ordem());
         aula.setModulo(modulo);
         return toDTO(aulaRepository.save(aula));
     }
 
     public void deletar(Integer id) {
-        aulaRepository.delete(findOrThrow(id));
+        Aula aula = findOrThrow(id);
+        aulaRepository.delete(aula);
     }
 
     private Aula findOrThrow(Integer id) {
@@ -82,7 +85,7 @@ public class AulaService {
 
     private AulaResponseDTO toDTO(Aula a) {
         return new AulaResponseDTO(a.getId(), a.getTitulo(), a.getDescricao(),
-                a.getOrdem(), a.getAtivo(),
+                a.getVideoUrl(), a.getOrdem(), a.getAtivo(),
                 a.getModulo().getId(), a.getModulo().getTitulo(),
                 a.getCreatedAt());
     }

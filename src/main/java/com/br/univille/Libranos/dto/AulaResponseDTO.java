@@ -6,6 +6,7 @@ public record AulaResponseDTO(
         Integer id,
         String titulo,
         String descricao,
+        String videoUrl,
         Integer ordem,
         Boolean ativo,
         Integer moduloId,

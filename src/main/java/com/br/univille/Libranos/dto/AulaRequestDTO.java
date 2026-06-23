@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Positive;
 public record AulaRequestDTO(
         @NotBlank(message = "Título é obrigatório") String titulo,
         String descricao,
+        String videoUrl,
         @NotNull(message = "Ordem é obrigatória") @Positive(message = "Ordem deve ser positiva") Integer ordem,
         @NotNull(message = "Módulo é obrigatório") Integer moduloId
 ) {}
