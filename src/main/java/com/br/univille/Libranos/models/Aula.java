@@ -40,6 +40,9 @@ public class Aula {
     @OneToMany(mappedBy = "aula", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Atividade> atividades = new ArrayList<>();
 
+    @OneToMany(mappedBy = "aula", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProgressoAluno> progressos = new ArrayList<>();
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
