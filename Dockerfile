@@ -5,7 +5,7 @@
 #   dependências só seja invalidado quando o pom.xml mudar, não a cada
 #   alteração no código-fonte.
 # ──────────────────────────────────────────────────────────────────────────────
-FROM maven:3.9-eclipse-temurin-17-alpine AS builder
+FROM maven:3.9-eclipse-temurin-21 AS builder
 
 WORKDIR /build
 
