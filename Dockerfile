@@ -1,6 +1,6 @@
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 1 — Build
-#   Usa a imagem oficial Maven + JDK 17 (Alpine) para montar o fat-JAR.
+#   Usa a imagem oficial Maven + JDK 21 para montar o fat-JAR.
 #   O truque de copiar o pom.xml antes do src garante que o layer de
 #   dependências só seja invalidado quando o pom.xml mudar, não a cada
 #   alteração no código-fonte.
@@ -19,10 +19,10 @@ RUN mvn package -DskipTests -B --no-transfer-progress
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Stage 2 — Runtime
-#   eclipse-temurin:17-jre-alpine é ~100 MB vs ~450 MB do JDK completo.
+#   eclipse-temurin:21-jre-alpine é bem menor que o JDK completo.
 #   Cria usuário não-privilegiado; a aplicação nunca roda como root.
 # ──────────────────────────────────────────────────────────────────────────────
-FROM eclipse-temurin:17-jre-alpine AS runtime
+FROM eclipse-temurin:21-jre-alpine AS runtime
 
 # Usuário de sistema sem shell de login e sem home directory
 RUN addgroup -S spring && adduser -S spring -G spring
